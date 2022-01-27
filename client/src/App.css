@@ -1,0 +1,17 @@
+.legacyTitle {
+    font-family: 'IM Fell English', serif;
+}
+
+.legacyTitleCursive {
+    font-family: 'UnifrakturMaguntia', cursive;
+}
+
+.form-wrapper {
+    display: flex;
+}
+
+.image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+ }
