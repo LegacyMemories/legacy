@@ -16,7 +16,7 @@ function LogoNav()  {
                   <div className="form-wrapper">
                     <img
                       alt=""
-                      src="./images/tree.png"
+                      src="./media/tree.png"
                       width="50"
                       height="50"
                       className="d-inline-block align-top"
