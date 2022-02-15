@@ -18,6 +18,7 @@ function SiteNav()  {
               <Nav.Link href="#TimeLine">Timeline</Nav.Link>
               <Nav.Link href="#Hobbies">Hobbies</Nav.Link>
               <Nav.Link href="#Blog">Blog</Nav.Link>
+              <Nav.Link href="/profile">Profile</Nav.Link>
             </Nav>
           </Navbar.Collapse>
         </Nav>
