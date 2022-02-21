@@ -1,31 +1,59 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import API from "../../utils/API";
-//import {useHistory} from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import "../main/main.css";
+import Col from "react-bootstrap/Col";
+import Row from "react-bootstrap/Row";
+import Container from "react-bootstrap/Container";
+import Button from "react-bootstrap/Button";
 
 function Profile() {
-
   var picURLInput="";
+  let navigate = useNavigate();
 
-  // setup references to fields on page
-  let firstName = React.createRef();
-  let middleName = React.createRef();
-  let lastName = React.createRef();
-  let nameSuffix = React.createRef();
-  let address = React.createRef();
-  let address2 = React.createRef();
-  let city = React.createRef();
-  let state = React.createRef();
-  let zipCode = React.createRef();
-//  let phone = React.createRef();
-//  let securityQuestion = React.createRef();
-//  let securityAnswer = React.createRef();
-  let birthplaceCity = React.createRef();
-  let birthplaceState = React.createRef();
-  let birthDate = React.createRef();
-//  let history = useHistory();
+  const {
 
-// function to upload profile photo to Cloudinary using their widget
-function showWidget() {
+    register,
+    handleSubmit,
+    setValue,
+    setError,
+    formState: { errors }
+  } = useForm();
+
+  // function to save the signup name to state
+  function handleChange(event) {
+    setSignup({
+      ...signup, [event.target.name]: event.target.value
+    })
+
+  }
+
+  const [signup, setSignup] = useState();
+
+    // object for initial values of fields on page
+    const initialValues = {
+      firstName:"",
+      middleName: "",
+      lastName:"",
+      suffix: "",
+      address: "",
+      address2: "",
+      city: "",
+      state: "",
+      zipCode: "",
+      birthplaceCity: "",
+      birthplaceState: "",
+      birthplaceDate: "",
+      password: "",
+      confirmPassword:"",
+      email: "",
+      securityQuestion:"",
+      answer:"",
+  
+    };
+  // function to upload profile photo to Cloudinary using their widget
+  function showWidget() {
 
     window.cloudinary.openUploadWidget({
       cloudName: process.env.REACT_APP_CLOUD_NAME,
@@ -73,165 +101,298 @@ function showWidget() {
     })
   }
 
-  // function to handle submit button
-  function handleSubmitBtnClick(e) {
-    e.preventDefault();
+  function onSubmit(data) {
     const profileData = 
     {
 //      _id: stateStore._id,
-      firstName: firstName.current.value,
-      middleName: middleName.current.value,
-      lastName: lastName.current.value,
-      nameSuffix: nameSuffix.current.value,
+      firstName: data.firstName,
+      middleName: data.middleName,
+      lastName: data.lastName,
+      nameSuffix: data.suffix,
       currentAddress: {
-        address: address.current.value,
-        address2: address2.current.value,
-        city: city.current.value,
-        state: state.current.value,
-        zipCode: zipCode.current.value,
+        address: data.address,
+        address2: data.address2,
+        city: data.city,
+        state: data.state,
+        zipCode: data.zipCode,
       },
       birthInfo: {
-        birthplaceCity: birthplaceCity.current.value,
-        birthplaceState: birthplaceState.current.value,
-        birthDate: birthDate.current.value,
+        birthplaceCity: data.birthplaceCity,
+        birthplaceState: data.birthplaceState,
+        birthDate: data.birthDate,
       },
-      profilePhoto: picURLInput
+      profilePhoto: picURLInput,
 
 //      phone: phone.current.value,
 //      securityQuestion: securityQuestion.current.value,
 //      securityAnswer: securityQuestion.current.value,
     }    
-//    console.log("help = ", regData.help_volunteer);
+
     console.log(profileData);
     API.saveProfile(profileData)
-      .then(res => {
-//        history.push("/LandingPage");
-console.log('success');
+     .then(res => {
+        navigate("/landingpage");
+        console.log('success');
       })
       .catch(err => console.log(err));
-  } 
+  };
 
   return (
-    <div className="container is-fluid">
-
-        <div className="container">
-          
+    <Container className="container is-fluid">
+      <Container className="container">
         <h1 className="title">Profile Form</h1>
-          <div className="row">
-            <div className="col-md-6 col-md-offset-3">
+        <Row className="row">
+          <Col md={12}>
+            <h2 className="title">Fill in profile below</h2>
+            <form className="signup" onSubmit={handleSubmit(onSubmit)}>
+              <Row>
+                <Col md={6}>
+                  <label htmlFor="firstName">First Name</label>
+                  <label className="requiredColor">*</label>
+                  <input 
+                    className="input form-control"
+                    defaultValue={initialValues.firstName}
+                    placeholder="First Name"
+                    type="firstName" required
+                    onChange={handleChange}
+                    {...register("firstName")}
+                  />
 
-              <h4 className="title is-4">Fill in profile below</h4>
-              <form className="signup">
-                <div id="registrationDiv">
-                  <div className="field is-grouped">
-                    <div className="control is-expanded">
-                      <div className="form-group">
-                        <label className="label" htmlFor="firstName">First Name</label>
-                        <input className="input form-control" ref={firstName} type="input" id="first-name" placeholder="First Name" required></input>
-                      </div>
-                    </div>
+                  <label htmlFor="middleName">Middle Name</label>
+                  <input className="input form-control" 
+                    defaultValue={initialValues.middleName}
+                    placeholder="Middle Name"
+                    type="middleName"
+                    onChange={handleChange}
+                    {...register("middleName")}
+                  />
 
-                    <div className="control is-expanded">
-                      <div className="form-group">
-                        <label className="label" htmlFor="middleName">Middle Name</label>
-                        <input className="input form-control" ref={middleName} type="input" id="middle-name" placeholder="Middle Name"></input>
-                      </div>
-                    </div>
+                  <label htmlFor="LastName">Last Name</label><label className="requiredColor">*</label>
+                  <input className="input form-control"
+                    defaultValue={initialValues.lastName}
+                    placeholder="Last Name"
+                    type="lastName" required
+                    onChange={handleChange}
+                    {...register("lastName")}
+                  />
 
-                    <div className="control is-expanded">
-                      <div className="form-group">
-                        <label className="label" htmlFor="lastName">Last Name</label>
-                        <input className="input form-control" ref={lastName} type="input" id="last-name" placeholder="Last Name" required></input>
-                      </div>
-                    </div>
-                  </div>
+                  <label htmlFor="suffix">Suffix</label>
+                  <input 
+                    className="input form-control"
+                    defaultValue={initialValues.suffix}
+                    placeholder="Suffix"
+                    type="suffix"
+                    onChange={handleChange}
+                    {...register("suffix")}
+                  />
+               
+                  <label htmlFor="address">Address</label><label className="requiredColor">*</label>
+                  <input 
+                    className="input form-control"
+                    defaultValue={initialValues.address}
+                    placeholder="Address"
+                    type="address" required
+                    onChange={handleChange}
+                    {...register("address")}
+                  />
 
-                  <div className="control is-expanded">
-                      <div className="form-group">
-                        <label className="label" htmlFor="nameSuffix">Suffix</label>
-                        <input className="input form-control" ref={nameSuffix} type="input" id="suffix-name" placeholder="Suffix"></input>
-                      </div>
-                  </div>
-                  
-                  <div className="field">
-                    <div className="form-group">
-                      <label className="label" htmlFor="address">Address</label>
-                      <input className="input form-control" ref={address} type="input" id="street" placeholder="Street" required></input>
-                    </div>
-                  </div>
+                  <label htmlFor="address2">Address2</label>
+                  <input 
+                    className="input form-control"
+                    defaultValue={initialValues.address2}
+                    placeholder="Address2"
+                    type="address"
+                    onChange={handleChange}
+                    {...register("address2")}
+                  />
 
-                  <div className="field">
-                    <div className="form-group">
-                      <label className="label" htmlFor="address2">Address2</label>
-                      <input className="input form-control" ref={address2} type="input" id="street2" placeholder="Street2" required></input>
-                    </div>
-                  </div>
+                  <label htmlFor="city">City</label><label className="requiredColor">*</label>
+                    <input 
+                      className="input form-control"
+                      defaultValue={initialValues.city}
+                      placeholder="City"
+                      type="city" required
+                      onChange={handleChange}
+                      {...register("city")}
+                    />
 
-                  <div className="field">
-                    <div className="field is-grouped">
-                      <div className="control is-expanded">
-                        <div className="form-group">
-                          <label className="label" htmlFor="city">City</label>
-                          <input className="input form-control" ref={city} type="input" id="city" placeholder="City" required></input>
-                        </div>
-                      </div>
+                    <label htmlFor="state">State</label><label className="requiredColor">*</label>
+                    <br/>
+                    <select className="select" required {...register("state", { required: true })}>
+                      <option value="">Choose...</option>
+                      <option value="AK">AK</option>
+                      <option value="AL">AL</option>
+                      <option value="AR">AR</option>
+                      <option value="AZ">AZ</option>
+                      <option value="CA">CA</option>
+                      <option value="CO">CO</option>
+                      <option value="CT">CT</option>
+                      <option value="DC">DC</option>
+                      <option value="DE">DE</option>
+                      <option value="FL">FL</option>
+                      <option value="GA">GA</option>
+                      <option value="HI">HI</option>
+                      <option value="IA">IA</option>
+                      <option value="ID">ID</option>
+                      <option value="IL">IL</option>
+                      <option value="IN">IN</option>
+                      <option value="KS">KS</option>
+                      <option value="KY">KY</option>
+                      <option value="LA">LA</option>
+                      <option value="MA">MA</option>
+                      <option value="MD">MD</option>
+                      <option value="ME">ME</option>
+                      <option value="MI">MI</option>
+                      <option value="MN">MN</option>
+                      <option value="MO">MO</option>
+                      <option value="MS">MS</option>
+                      <option value="MT">MT</option>
+                      <option value="NC">NC</option>
+                      <option value="ND">ND</option>
+                      <option value="NE">NE</option>
+                      <option value="NH">NH</option>
+                      <option value="NJ">NJ</option>
+                      <option value="NM">NM</option>
+                      <option value="NV">NV</option>
+                      <option value="NY">NY</option>
+                      <option value="OH">OH</option>
+                      <option value="OK">OK</option>
+                      <option value="OR">OR</option>
+                      <option value="PA">PA</option>
+                      <option value="RI">RI</option>
+                      <option value="SC">SC</option>
+                      <option value="SD">SD</option>
+                      <option value="TN">TN</option>
+                      <option value="TX">TX</option>
+                      <option value="UT">UT</option>
+                      <option value="VA">VA</option>
+                      <option value="VT">VT</option>
+                      <option value="WA">WA</option>
+                      <option value="WI">WI</option>
+                      <option value="WV">WV</option>
+                      <option value="WY">WY</option>
+                    </select>
 
-                      <div className="control is-expanded">
-                        <div className="form-group">
-                          <label className="label" htmlFor="state">State</label>
-                          <input className="input form-control" ref={state} type="input" id="state" placeholder="State" maxLength="2" size="2" required></input>
-                        </div>
-                      </div>
+                    <br/>
+                    <label htmlFor="zipCode">Zip Code</label><label className="requiredColor">*</label>
+                    <input 
+                      className="input form-control"
+                      defaultValue={initialValues.zipCode}
+                      placeholder="Zip Code"
+                      type="zipCode" required
+                      onChange={handleChange}
+                      {...register("zipCode")}
+                    /> 
+                 </Col>
+                 <Col md={6}>          
+                    <label htmlFor="birthPlaceCity">Birthplace City</label>
+                    <input 
+                      className="input form-control"
+                      defaultValue={initialValues.birthplaceCity}
+                      placeholder="Birthplace City"
+                      type="birthplaceCity"
+                      onChange={handleChange}
+                      {...register("birthplaceCity")}
+                    />
 
-                      <div className="control is-expanded">
-                        <div className="form-group">
-                          <label className="label" htmlFor="zip">Zip</label>
-                          <input className="input form-control" ref={zipCode} type="input" id="zip" placeholder="Zip" maxLength="5" size="5" required></input>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="control is-expanded">
-                    <div className="form-group">
-                      <label className="label" htmlFor="birthplaceCity">Birth Place City</label>
-                      <input className="input form-control" ref={birthplaceCity} type="input" id="birthplaceCity" placeholder="Birthplace City"></input>
-                    </div>
-                  </div>
+                    <label htmlFor="birthplaceState">Birthplace State</label>
+                    <br/>
+                    <select className="select" required {...register("birthplaceState", { required: true })}>
+                      <option value="">Choose...</option>
+                      <option value="AK">AK</option>
+                      <option value="AL">AL</option>
+                      <option value="AR">AR</option>
+                      <option value="AZ">AZ</option>
+                      <option value="CA">CA</option>
+                      <option value="CO">CO</option>
+                      <option value="CT">CT</option>
+                      <option value="DC">DC</option>
+                      <option value="DE">DE</option>
+                      <option value="FL">FL</option>
+                      <option value="GA">GA</option>
+                      <option value="HI">HI</option>
+                      <option value="IA">IA</option>
+                      <option value="ID">ID</option>
+                      <option value="IL">IL</option>
+                      <option value="IN">IN</option>
+                      <option value="KS">KS</option>
+                      <option value="KY">KY</option>
+                      <option value="LA">LA</option>
+                      <option value="MA">MA</option>
+                      <option value="MD">MD</option>
+                      <option value="ME">ME</option>
+                      <option value="MI">MI</option>
+                      <option value="MN">MN</option>
+                      <option value="MO">MO</option>
+                      <option value="MS">MS</option>
+                      <option value="MT">MT</option>
+                      <option value="NC">NC</option>
+                      <option value="ND">ND</option>
+                      <option value="NE">NE</option>
+                      <option value="NH">NH</option>
+                      <option value="NJ">NJ</option>
+                      <option value="NM">NM</option>
+                      <option value="NV">NV</option>
+                      <option value="NY">NY</option>
+                      <option value="OH">OH</option>
+                      <option value="OK">OK</option>
+                      <option value="OR">OR</option>
+                      <option value="PA">PA</option>
+                      <option value="RI">RI</option>
+                      <option value="SC">SC</option>
+                      <option value="SD">SD</option>
+                      <option value="TN">TN</option>
+                      <option value="TX">TX</option>
+                      <option value="UT">UT</option>
+                      <option value="VA">VA</option>
+                      <option value="VT">VT</option>
+                      <option value="WA">WA</option>
+                      <option value="WI">WI</option>
+                      <option value="WV">WV</option>
+                      <option value="WY">WY</option>
+                    </select>
 
-                  <div className="control is-expanded">
-                    <div className="form-group">
-                      <label className="label" htmlFor="birthplaceState">Birthplace State</label>
-                      <input className="input form-control" ref={birthplaceState} type="input" id="birthplaceState" placeholder="Birthplace State"></input>
-                    </div>
-                  </div>
+                    <br/>                        
+                    <label htmlFor="date">Birth Date</label>
+                    <input 
+                      className="input form-control"
+                      defaultValue={initialValues.birthDate}
+                      placeholder="Birth Date"
+                      type="date"
+                      onChange={handleChange}
+                      {...register("birthDate")}
+                    />
+                    <p className="requiredColor"><label className="requiredColor">*</label> = required field</p>
 
-                  <div className="control">
-                    <div className="field form-group">
-                      <label className="label" htmlFor="birthplaceDate">Birth Date</label>
-                      <input className="input" ref={birthDate} type="date" id="birthplaceDate" name="birthplaceDate"></input>
-                    </div>
-                  </div>
-
+                    <p>To upload a Profile picture:</p>
+                    <ol>
+                      <li>Click the Upload Profile Photo button.</li>
+                      <li>Click Browse to select photo and then click Open button. (Alternatively, drag/drop photo into pop-up window.)</li>
+                      <li>Crop the photo, if necessary, OR click Skip.</li>
+                      <li>Photo is now captured and will be saved as part of your profile after clicking Submit button.</li>
+                    </ol>
                     <div className="form-group">
                       <div>
                         <br/>
-                        <button className="control button button-ikr is-primary" type="button" id="upload_widget" onClick={showWidget}>Upload Profile Photo</button>
+                        <Button type="button" variant="success" onClick={showWidget}>Upload Profile Photo</Button>
                       </div>
                       <br/>
                     </div>
-            <br/>
-            <br/>
-            <button id="signup" type="submit" className="control button button-ikr is-primary" onClick={handleSubmitBtnClick}>Submit Profile</button>
-          </div>
+                  </Col>
+                </Row>
+              <Row>
+            <Col md="auto">
+              <br/>
+              <br/>
+              <Button as="input" type="submit" variant="success" value="Submit Profile" />
+            </Col>
+          </Row>
         </form>
-      <br/>
-     </div>
-    </div>
-   </div>
-
- </div>
-  
+        <br/>
+      </Col>
+    </Row>
+   </Container>
+  </Container>  
   );
 }
 

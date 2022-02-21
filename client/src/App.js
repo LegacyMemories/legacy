@@ -17,8 +17,9 @@ function App() {
       <Container className="App" fluid>
         <Header/>
         <Routes>
-          <Route path="/" element={<LandingPage/>} />
+          <Route path="/landingPage" element={ <LandingPage/> } />
           <Route path="/profile" element={ <Profile/> } />
+          <Route path="/" element={<LandingPage/>} />
         </Routes>
         <Footer/>
       </Container>
