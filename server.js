@@ -4,6 +4,15 @@ const session = require("express-session");
 const dbConnection = require("./models");
 const mongoose = require("mongoose");
 
+
+
+const keys = require("./config/keys")
+
+require("./models/User")
+require("./services/passport");
+
+require("./routes/authRoutes")(app);
+
 const routes = require("./routes");
 const app = express();
 //require('dotenv').config();
@@ -38,6 +47,6 @@ mongoose.connect(
 );
 
 // Start the API server
-app.listen(PORT, function() {
+app.listen(PORT, function () {
   console.log(`🌎  ==> Server now listening on PORT ${PORT}!`);
 });
