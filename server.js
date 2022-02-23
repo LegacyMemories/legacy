@@ -1,38 +1,50 @@
 const express = require("express");
-const app = express();
-const bodyParser = require("body-parser");
+const morgan = require("morgan");
+const session = require("express-session");
+const dbConnection = require("./models");
 const mongoose = require("mongoose");
+
+
+
 const keys = require("./config/keys")
 
 require("./models/User")
 require("./services/passport");
 
+require("./routes/authRoutes")(app);
 
-
-mongoose.connect(keys.mongoURI);
+const routes = require("./routes");
+const app = express();
+//require('dotenv').config();
 const PORT = process.env.PORT || 3001;
 
-require("dotenv").config();
-
-require("./routes/authRoutes")(app);
-// Configure body parser for AJAX requests
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+// Define middleware here
+app.use(morgan('dev'));
+app.use(express.urlencoded({ extended: true}));
+app.use(express.json());
 
 // Serve up static assets
-app.use(express.static("client/build"));
+if ( process.env.NODE_ENV === "production") {
+  app.use(express.static("client/build"));
+}
+else app.use(express.static('client/public'));
+
+app.use(session ({
+  secret: 'dementia',
+  resave: false,
+}))
 
 // Add routes here
 
 //Get request for the landing page
-app.get("/", (req, res) => {
-  res.json(JSON.parse(response.body));
-});
+app.use(routes);
 
-//if running on a deployed site use the build folder
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static("client/build"));
-}
+// Connect to the Mongo DB
+mongoose.connect(
+  process.env.MONGODB_URI || 'mongodb://localhost/legacy',
+  {
+  }
+);
 
 // Start the API server
 app.listen(PORT, function () {
