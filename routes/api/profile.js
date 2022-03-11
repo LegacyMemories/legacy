@@ -2,7 +2,8 @@ const router = require("express").Router();
 const profileController = require("../../controllers/profileController");
 console.log("in profile routes");
 // Matches with "/api/profile"
-router.route("/")
+router
+  .route("/")
   .get(profileController.findAll)
   .post(profileController.create)
   .delete(profileController.remove);

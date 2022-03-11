@@ -1,49 +1,55 @@
 const express = require("express");
 const morgan = require("morgan");
 const session = require("express-session");
+const cookieSession = require("cookie-session");
+const passport = require("passport");
 const dbConnection = require("./models");
 const mongoose = require("mongoose");
+const app = express();
+const keys = require("./config/keys");
 
-
-
-const keys = require("./config/keys")
-
-require("./models/User")
-require("./services/passport");
-
-require("./routes/authRoutes")(app);
+app.use(
+  cookieSession({
+    maxAge: 30 * 24 * 60 * 60 * 1000,
+    keys: [keys.cookieKey],
+  })
+);
+app.use(passport.initialize());
+app.use(passport.session());
 
 const routes = require("./routes");
-const app = express();
-//require('dotenv').config();
+const authRoutes = require("./routes/authRoutes");
+
 const PORT = process.env.PORT || 3001;
 
 // Define middleware here
-app.use(morgan('dev'));
-app.use(express.urlencoded({ extended: true}));
+app.use(morgan("dev"));
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 // Serve up static assets
-if ( process.env.NODE_ENV === "production") {
+if (process.env.NODE_ENV === "production") {
   app.use(express.static("client/build"));
-}
-else app.use(express.static('client/public'));
+} else app.use(express.static("client/public"));
 
-app.use(session ({
-  secret: 'dementia',
-  resave: false,
-}))
+require("./models/user");
+require("./services/passport");
 
-// Add routes here
+app.use(authRoutes, routes);
 
-//Get request for the landing page
-app.use(routes);
+//require('dotenv').config();
+
+// app.use(
+//   session({
+//     secret: "dementia",
+//     resave: false,
+//   })
+// );
 
 // Connect to the Mongo DB
 mongoose.connect(
-  process.env.MONGODB_URI || 'mongodb://localhost/legacy',
-  {
-  }
+  process.env.MONGODB_URI || "mongodb://localhost:27017/legacy",
+  {}
 );
 
 // Start the API server
