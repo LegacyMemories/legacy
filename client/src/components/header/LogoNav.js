@@ -12,7 +12,7 @@ function LogoNav()  {
 
         <Navbar bg="dark" variant="dark" expand="md">
             <Container fluid>
-                <Navbar.Brand href="#home">
+                <Navbar.Brand href="/">
                   <div className="form-wrapper">
                     <img
                       alt=""

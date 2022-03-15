@@ -17,6 +17,8 @@ const myRoutes = {
 
   // Updates profile in database
   updateProfile: function(id, profileData) {
+    console.log("id = ", id);
+    console.log("data = ", profileData);
     return axios.put("/api/profile/" + id, profileData);
   },
 
@@ -28,8 +30,12 @@ const myRoutes = {
   // Delete all profiles in database
   deleteAllProfiles: function() {
     return axios.delete("/api/profile");
+  },
+
+  getProfileInfo: function(id) {
+    console.log("id = ", id)
+    return axios.post("/api/editprofile/" + id);
   }
-  
 };
 
 export default myRoutes;

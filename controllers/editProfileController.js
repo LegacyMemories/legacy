@@ -17,7 +17,6 @@ module.exports = {
       .catch(err => {console.log("in error create"); res.status(422).json(err)});
   },
   update: function(req, res) {
-    console.log(req.params.id);
     db.Profile
       .findOneAndUpdate({ _id: req.params.id }, req.body, {new: true})
       .then(dbModel => {res.json(dbModel);})
